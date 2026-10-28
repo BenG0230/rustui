@@ -1,18 +1,18 @@
 use std::io::{self, Write};
 
-use rustui::{
-    input::raw::{input_available, read_byte},
-    terminal::Terminal,
-};
+use rustui::{input::KeyCode, terminal::Terminal};
 
 fn main() -> io::Result<()> {
     let term = Terminal::setup_raw()?;
 
-    loop {
-        let events = rustui::input::keyboard::read_input()?;
+    'main: loop {
+        let events = rustui::input::read_input()?;
         if events.len() > 0 {
             for event in events {
-                print!("{:?} ", event.code);
+                match event.code {
+                    KeyCode::Escape => break 'main,
+                    code => print!("{:?} ", code),
+                }
             }
         }
         io::stdout().flush()?;

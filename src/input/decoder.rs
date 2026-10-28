@@ -72,7 +72,7 @@ impl Decoder {
                 32 => events.push(KeyEvent {
                     code: KeyCode::Space,
                 }),
-                _ => {}
+                _ => print!("{} ", byte),
             }
         }
 
