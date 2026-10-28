@@ -56,16 +56,16 @@ impl Drop for Terminal {
 }
 
 pub fn get_size() -> io::Result<(u16, u16)> {
-    let size = std::mem::MaybeUninit::<libc::winsize>::zeroed();
-    let result = unsafe { ioctl(STDOUT_FILENO, libc::TIOCGWINSZ, &size) };
+    let mut size = std::mem::MaybeUninit::<libc::winsize>::zeroed();
+    let result = unsafe { ioctl(STDOUT_FILENO, libc::TIOCGWINSZ, size.as_mut_ptr()) };
 
-    match result {
-        0 => unsafe {
-            let size = size.assume_init();
-            Ok((size.ws_col, size.ws_row))
-        },
-        _ => Err(io::Error::last_os_error()),
+    if result < 0 {
+        return Err(io::Error::last_os_error());
     }
+
+    let size = unsafe { size.assume_init() };
+
+    Ok((size.ws_col, size.ws_row))
 }
 
 fn enable_raw_mode() -> io::Result<termios> {

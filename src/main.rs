@@ -28,13 +28,14 @@ fn main() -> io::Result<()> {
 
         buff.write_cell(12, 11, 'o', Style::default());
 
-        print!("\x1b[10;10H{}", last.elapsed().as_millis());
+        print!("\x1b[10;10H{}μs", last.elapsed().as_micros());
+
         last = Instant::now();
 
         io::stdout().flush()?;
         display(&buff)?;
         term.refresh_size()?;
-        std::thread::sleep(std::time::Duration::from_millis(16));
+        // std::thread::sleep(std::time::Duration::from_millis(16));
     }
 
     Ok(())

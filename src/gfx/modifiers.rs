@@ -16,11 +16,11 @@ impl Modifiers {
     pub const STRIKETHROUGH: Self = Self(1 << 7);
 
     pub fn add_modifier(&mut self, modifier: Self) {
-        self.0 &= modifier.0;
+        self.0 |= modifier.0;
     }
 
     pub fn remove_modifier(&mut self, modifier: Self) {
-        self.0 |= modifier.0;
+        self.0 &= !modifier.0;
     }
 
     pub fn get_code_change(&self, old: Self) -> String {

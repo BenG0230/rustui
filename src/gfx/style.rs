@@ -1,6 +1,6 @@
 use crate::gfx::{colours::Colour, modifiers::Modifiers};
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq)]
 pub struct Style {
     pub fg: Colour,
     pub bg: Colour,
@@ -27,7 +27,10 @@ impl Style {
             out.push(self.bg.get_code(false));
         }
 
-        out.push(self.modifiers.get_code_change(old.modifiers));
+        let modifiers = self.modifiers.get_code_change(old.modifiers);
+        if !modifiers.is_empty() {
+            out.push(modifiers);
+        }
 
         out.join(";")
     }

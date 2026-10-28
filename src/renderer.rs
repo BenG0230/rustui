@@ -9,8 +9,16 @@ pub fn display(buff: &ScreenBuffer) -> io::Result<()> {
     let mut current_style = Style::default();
 
     while let Some(cell) = buff_iter.next() {
-        let style_string = cell.style.get_new_code(current_style);
-        out = format!("{}\x1b[{}m", out, style_string);
+        if cell.style != current_style {
+            let style_string = cell.style.get_new_code(current_style);
+
+            if !style_string.is_empty() {
+                out.push_str("\x1b[");
+                out.push_str(&style_string);
+                out.push('m');
+            }
+        }
+
         out.push(cell.char);
 
         current_style = cell.style;
