@@ -3,38 +3,32 @@ use std::{
     time::Instant,
 };
 
-use rustui::{
-    buffer::screenbuffer::ScreenBuffer, gfx::style::Style, input::KeyCode, renderer::display,
-    terminal::Terminal,
-};
+use rustui::{engine::Engine, gfx::style::Style, input::KeyCode};
 
 fn main() -> io::Result<()> {
-    let mut term = Terminal::setup_raw()?;
-
-    let mut buff = ScreenBuffer::new(term.width, term.height);
-
+    let mut engine = Engine::new()?;
     let mut last = Instant::now();
 
     'main: loop {
-        let events = rustui::input::read_input()?;
-        if events.len() > 0 {
-            for event in events {
-                match event.code {
-                    KeyCode::Escape => break 'main,
-                    code => print!("{:?}", code),
-                }
+        engine.clear_buffer();
+        let events = engine.read_inputs()?;
+        let mut i = 10;
+        for event in events {
+            i += 1;
+            match event.code {
+                KeyCode::Escape => break 'main,
+                code => engine.put_str(10, i, &format!("{:?}", code), Style::default()),
             }
         }
 
-        buff.write_cell(12, 11, 'o', Style::default());
-
-        print!("\x1b[10;10H{}μs", last.elapsed().as_micros());
-
+        engine.put_str(
+            rand::random::<u8>() as usize,
+            rand::random::<u8>() as usize,
+            &format!("{}μs", last.elapsed().as_micros()),
+            Style::default(),
+        );
         last = Instant::now();
-
-        io::stdout().flush()?;
-        display(&buff)?;
-        term.refresh_size()?;
+        engine.draw()?;
         // std::thread::sleep(std::time::Duration::from_millis(16));
     }
 

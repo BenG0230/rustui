@@ -2,7 +2,7 @@ use std::io::{self, Write};
 
 use crate::{buffer::screenbuffer::ScreenBuffer, gfx::style::Style};
 
-pub fn display(buff: &ScreenBuffer) -> io::Result<()> {
+pub(crate) fn draw(buff: &ScreenBuffer) -> io::Result<()> {
     let mut buff_iter = buff.into_iter();
 
     let mut out = String::new();

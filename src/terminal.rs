@@ -10,7 +10,7 @@ pub struct Terminal {
 }
 
 impl Terminal {
-    pub fn setup_raw() -> io::Result<Self> {
+    pub(crate) fn setup_raw() -> io::Result<Self> {
         let original = enable_raw_mode()?;
         let size = get_size()?;
 
@@ -55,7 +55,7 @@ impl Drop for Terminal {
     }
 }
 
-pub fn get_size() -> io::Result<(u16, u16)> {
+pub(crate) fn get_size() -> io::Result<(u16, u16)> {
     let mut size = std::mem::MaybeUninit::<libc::winsize>::zeroed();
     let result = unsafe { ioctl(STDOUT_FILENO, libc::TIOCGWINSZ, size.as_mut_ptr()) };
 

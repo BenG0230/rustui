@@ -1,11 +1,11 @@
 use super::cell::Cell;
 use crate::gfx::style::Style;
 
-pub struct ScreenBuffer {
+pub(crate) struct ScreenBuffer {
     cells: Vec<Cell>,
 
-    pub width: u16,
-    pub height: u16,
+    pub(crate) width: u16,
+    pub(crate) height: u16,
 }
 
 impl ScreenBuffer {
@@ -32,6 +32,10 @@ impl ScreenBuffer {
             buff: self,
             index: 0,
         }
+    }
+
+    pub(crate) fn clear_buffer(&mut self) {
+        self.cells = vec![Cell::default(); (self.width * self.height) as usize];
     }
 }
 
