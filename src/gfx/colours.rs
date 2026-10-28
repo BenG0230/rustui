@@ -1,4 +1,4 @@
-#[derive(PartialEq)]
+#[derive(PartialEq, Clone, Copy)]
 pub enum Colour {
     Rgb(u8, u8, u8), // Truecolour r,g,b
     C256(u8),        // 256 colour mode
@@ -18,7 +18,7 @@ impl Colour {
             Colour::C16(n) => {
                 format!("{}", n + if foreground { 0 } else { 10 })
             }
-            _ => String::new(),
+            _ => if foreground { 39 } else { 49 }.to_string(),
         }
     }
 }

@@ -2,13 +2,9 @@ use std::io;
 
 use libc::{STDOUT_FILENO, ioctl, termios};
 
-pub struct Size {
+pub struct Terminal {
     pub width: u16,
     pub height: u16,
-}
-
-pub struct Terminal {
-    pub size: Size,
 
     original: termios,
 }
@@ -25,18 +21,30 @@ impl Terminal {
         // Reset formatting
         print!("\x1b[0m");
 
-        Ok(Self { original, size })
+        Ok(Self {
+            original,
+            width: size.0,
+            height: size.1,
+        })
     }
 
     pub fn refresh_size(&mut self) -> io::Result<()> {
         let size = get_size()?;
-        self.size = size;
+        self.width = size.0;
+        self.height = size.1;
         Ok(())
     }
 }
 
 impl Drop for Terminal {
     fn drop(&mut self) {
+        // Reset formatting
+        print!("\x1b[0m");
+        // Leave alternate screen
+        print!("\x1b[?1049l");
+        // Show cursor
+        print!("\x1b[?25h");
+
         // Restore terminal attributes
         match disable_raw_mode(self.original) {
             Err(e) => {
@@ -44,27 +52,17 @@ impl Drop for Terminal {
             }
             _ => {}
         }
-
-        // Leave alternate screen
-        print!("\x1b[?1049l");
-        // Show cursor
-        print!("\x1b[?25h");
-        // Reset formatting
-        print!("\x1b[0m");
     }
 }
 
-pub fn get_size() -> io::Result<Size> {
+pub fn get_size() -> io::Result<(u16, u16)> {
     let size = std::mem::MaybeUninit::<libc::winsize>::zeroed();
     let result = unsafe { ioctl(STDOUT_FILENO, libc::TIOCGWINSZ, &size) };
 
     match result {
         0 => unsafe {
             let size = size.assume_init();
-            Ok(Size {
-                width: size.ws_row,
-                height: size.ws_col,
-            })
+            Ok((size.ws_col, size.ws_row))
         },
         _ => Err(io::Error::last_os_error()),
     }

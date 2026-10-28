@@ -1,9 +1,19 @@
-use std::io::{self, Write};
+use std::{
+    io::{self, Write},
+    time::Instant,
+};
 
-use rustui::{input::KeyCode, terminal::Terminal};
+use rustui::{
+    buffer::screenbuffer::ScreenBuffer, gfx::style::Style, input::KeyCode, renderer::display,
+    terminal::Terminal,
+};
 
 fn main() -> io::Result<()> {
-    let term = Terminal::setup_raw()?;
+    let mut term = Terminal::setup_raw()?;
+
+    let mut buff = ScreenBuffer::new(term.width, term.height);
+
+    let mut last = Instant::now();
 
     'main: loop {
         let events = rustui::input::read_input()?;
@@ -11,12 +21,19 @@ fn main() -> io::Result<()> {
             for event in events {
                 match event.code {
                     KeyCode::Escape => break 'main,
-                    code => print!("{:?} ", code),
+                    code => print!("{:?}", code),
                 }
             }
         }
-        io::stdout().flush()?;
 
+        buff.write_cell(12, 11, 'o', Style::default());
+
+        print!("\x1b[10;10H{}", last.elapsed().as_millis());
+        last = Instant::now();
+
+        io::stdout().flush()?;
+        display(&buff)?;
+        term.refresh_size()?;
         std::thread::sleep(std::time::Duration::from_millis(16));
     }
 

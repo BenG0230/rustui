@@ -1,5 +1,6 @@
 use crate::gfx::{colours::Colour, modifiers::Modifiers};
 
+#[derive(Clone, Copy)]
 pub struct Style {
     pub fg: Colour,
     pub bg: Colour,
@@ -7,6 +8,14 @@ pub struct Style {
 }
 
 impl Style {
+    pub const fn default() -> Self {
+        Self {
+            fg: Colour::None,
+            bg: Colour::None,
+            modifiers: Modifiers::NONE,
+        }
+    }
+
     pub fn get_new_code(&self, old: Self) -> String {
         let mut out = Vec::new();
 
