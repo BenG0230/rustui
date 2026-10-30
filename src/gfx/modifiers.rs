@@ -1,5 +1,5 @@
 #[derive(PartialEq, Clone, Copy)]
-pub struct Modifiers(u8);
+pub struct Modifiers(pub u8);
 
 const ENABLE: [u8; 8] = [1, 2, 3, 4, 5, 7, 8, 9];
 const DISABLE: [u8; 8] = [22, 22, 23, 24, 25, 27, 28, 29];

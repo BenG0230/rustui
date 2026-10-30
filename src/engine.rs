@@ -2,14 +2,17 @@ use std::io;
 
 use crate::{
     buffer::screenbuffer::ScreenBuffer,
-    gfx::style::Style,
+    gfx::{
+        shapes::{draw_hline, draw_line, draw_square, draw_vline},
+        style::Style,
+    },
     input::{KeyEvent, read_input},
     renderer::draw,
     terminal::Terminal,
 };
 
 pub struct Engine {
-    term: Terminal,
+    pub term: Terminal,
     buff: ScreenBuffer,
 }
 
@@ -42,5 +45,9 @@ impl Engine {
 
     pub fn draw(&self) -> io::Result<()> {
         draw(&self.buff)
+    }
+
+    pub fn draw_line(&mut self, x0: usize, y0: usize, x1: usize, y1: usize, c: char, style: Style) {
+        draw_square(&mut self.buff, x0, y0, x1, y1 + 1, c, style);
     }
 }

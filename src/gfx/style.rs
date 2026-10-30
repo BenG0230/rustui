@@ -34,4 +34,20 @@ impl Style {
 
         out.join(";")
     }
+
+    pub fn random() -> Self {
+        Self {
+            fg: Colour::Rgb(
+                rand::random_range(0..255),
+                rand::random_range(0..255),
+                rand::random_range(0..255),
+            ),
+            bg: Colour::Rgb(
+                rand::random_range(0..255),
+                rand::random_range(0..255),
+                rand::random_range(0..255),
+            ),
+            modifiers: Modifiers(rand::random::<u8>()),
+        }
+    }
 }
