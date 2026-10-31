@@ -19,7 +19,7 @@ fn main() -> io::Result<()> {
             }
         }
 
-        engine.draw_line(10, 10, 15, 15, 'o', Style::default());
+        engine.draw_line(10, 10, 11, 15, 'o', Style::default());
 
         engine.draw()?;
         std::thread::sleep(std::time::Duration::from_millis(16));

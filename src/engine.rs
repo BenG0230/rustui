@@ -48,6 +48,12 @@ impl Engine {
     }
 
     pub fn draw_line(&mut self, x0: usize, y0: usize, x1: usize, y1: usize, c: char, style: Style) {
-        draw_square(&mut self.buff, x0, y0, x1, y1 + 1, c, style);
+        if x0 == x1 {
+            draw_vline(&mut self.buff, x0, y0, y1, c, style);
+        } else if y0 == y1 {
+            draw_hline(&mut self.buff, y0, x0, x1, c, style);
+        } else {
+            draw_line(&mut self.buff, x0, y0, x1, y1, c, style);
+        }
     }
 }
