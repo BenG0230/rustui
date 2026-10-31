@@ -8,6 +8,10 @@ pub struct Style {
 }
 
 impl Style {
+    pub fn new(fg: Colour, bg: Colour, modifiers: Modifiers) -> Self {
+        Self { fg, bg, modifiers }
+    }
+
     pub const fn default() -> Self {
         Self {
             fg: Colour::None,
